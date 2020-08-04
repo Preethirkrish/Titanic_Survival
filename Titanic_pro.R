@@ -29,5 +29,29 @@ ggplot(data.frame, aes(x= Survived))+
   geom_bar(width = 0.5, fill = "coral")+
   geom_text(stat='count', aes(label=stat(count)), vjust=-0.5)
 
+#Survival count by sex
+ggplot(data.frame, aes(x= Survived,fill = Sex))+
+  geom_bar(position = position_dodge())+
+  geom_text(stat = 'count', 
+            aes(label =stat(count)), 
+            position = position_dodge(width = 1), vjust= -0.5)
 
-  
+#Survival count by Pclass(Passenger class)
+ggplot(data.frame, aes(x= Survived,fill = Pclass))+
+  geom_bar(position = position_dodge())+
+  geom_text(stat = 'count', 
+            aes(label =stat(count)), 
+            position = position_dodge(width = 1), vjust= -0.5)
+
+#Age Density
+ggplot(data.frame, aes(x= Age))+
+  geom_density(fill ='grey')
+
+#Survival count by age
+# discritizing age
+data.frame$Discritized.age= cut(data.frame$Age, c(0,10,20,30,40,50,60,70,80,100))
+ggplot(data.frame, aes(x= Discritized.age,fill = Survived))+
+  geom_bar(position = position_dodge())+
+  geom_text(stat = 'count', 
+            aes(label =stat(count)), 
+            position = position_dodge(width = 1), vjust= -0.5)
