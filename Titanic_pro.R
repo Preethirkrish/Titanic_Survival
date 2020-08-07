@@ -1,14 +1,18 @@
 View(train)
 library(Amelia)
+library(ggplot2)
+library(dplyr)
 
-#missmap(train,, vars =Age,main="Titanic Training Data - Missings Map", col=c("yellow", "black"), legend=FALSE)
-library(visdat)
-vis_miss(train)
+df2 <- bind_rows(train, test)  
+
+#missmap(obj=Titanic.train)
+visdat::vis_dat(df2)
+
 
 # Droping Cabin as most of the values are missing
 # Droping Embarked, PAssengerId, Fare, Ticket, Name as they do not decide the survival
 
-library(dplyr)
+
 data.frame = select(train, Survived, Age, Pclass, Sex, SibSp, Parch)
 data.frame=na.omit(data.frame)
 str(data.frame)
@@ -24,7 +28,7 @@ library(GGally)
 ggcorr(data.frame, nbreaks = 6, label = TRUE, label_size = 3, color = "grey")
 
 #survived count
-library(ggplot2)
+
 ggplot(data.frame, aes(x= Survived))+
   geom_bar(width = 0.5, fill = "coral")+
   geom_text(stat='count', aes(label=stat(count)), vjust=-0.5)
@@ -55,3 +59,24 @@ ggplot(data.frame, aes(x= Discritized.age,fill = Survived))+
   geom_text(stat = 'count', 
             aes(label =stat(count)), 
             position = position_dodge(width = 1), vjust= -0.5)
+
+#Create train and test data
+train_test_split = function(data, fraction = 0.8, train = TRUE) {
+  total_rows = nrow(data)
+  train_rows = fraction * total_rows
+  sample = 1:train_rows
+  if (train == TRUE) {
+    return (data[sample, ])
+  } else {
+    return (data[-sample, ])
+  }
+}
+
+train<- train_test_split(data.frame,0.8,train=TRUE)
+test<- train_test_split(data.frame,0.8,train = FALSE)
+
+#Decision tree
+library(rpart)
+library(rpart.plot)
+fit<- rpart(Survived~., data = train, method = 'class')
+rpart.plot(fit, extra = 101)
